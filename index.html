@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modelo 3D con Giroscopio</title>
+    <title>Modelo 3D - Día de la Creatividad e Innovación</title>
     <!-- Cargar Model Viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
     <style>
         body {
             margin: 0; padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
+            min-height: 100vh;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
         }
@@ -21,41 +21,112 @@
             padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             text-align: center;
         }
+        
+        /* 🔹 Banner conmemorativo */
+        .banner {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .banner span {
+            display: block;
+            font-size: 0.9em;
+            opacity: 0.95;
+            margin-top: 4px;
+        }
+        
         model-viewer {
             width: 100%; height: 400px;
-            background-color: #f0f0f0; border-radius: 10px;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
         }
+        
         .controls { margin-top: 15px; }
         button {
             padding: 10px 20px; border: none; border-radius: 20px;
-            font-size: 1em; cursor: pointer; margin: 5px; color: white;
+            font-size: 0.95em; cursor: pointer; margin: 5px; color: white;
+            transition: transform 0.2s;
         }
+        button:active { transform: scale(0.98); }
         .btn-gyro { background-color: #ff9800; }
         .btn-ar { background-color: #667eea; }
         .btn-disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        /* 🔹 Footer con crédito */
+        .footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+            color: #764ba2;
+        }
+        .instagram-icon {
+            font-size: 1.2em;
+        }
+        
+        /* 🔹 Instrucciones visuales */
+        .hint {
+            font-size: 0.85em;
+            color: #666;
+            margin: 8px 0;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎓 Modelo 3D Educativo</h1>
-        <p>📱 Inclina el teléfono o usa el dedo para rotar</p>
+        
+        <!-- 🔹 Banner conmemorativo -->
+        <div class="banner">
+            🎨✨ Día de la Creatividad e Innovación ✨🎨
+            <span>Actividad educativa interactiva</span>
+        </div>
         
         <model-viewer 
             id="modelo3d"
             src="tierra.glb" 
-            alt="Modelo 3D"
+            alt="Modelo 3D Educativo"
             auto-rotate
             camera-controls
             ar
-            ar-modes="webxr scene-viewer quick-look">
+            ar-modes="webxr scene-viewer quick-look"
+            shadow-intensity="1">
         </model-viewer>
 
+        <p class="hint">👆 Rota con el dedo • 📱 Inclina el teléfono • 📷 AR para ver en tu espacio</p>
+
         <div class="controls">
-            <!-- Botón para activar giroscopio -->
             <button id="btnGyro" class="btn-gyro" onclick="activarGiroscopio()">🔄 Activar Rotación por Movimiento</button>
-            <!-- Botón para AR -->
             <button slot="ar-button" class="btn-ar">📷 Ver en Realidad Aumentada</button>
         </div>
+
+        <!-- 🔹 Footer con crédito profesional -->
+        <div class="footer">
+            <p>Desarrollado por:<br>
+            <strong>Prof. Lenyn Conde</strong></p>
+            <a href="https://www.instagram.com/tutorgptclass?igsh=M2hmam14dm00emls" target="_blank" rel="noopener">
+                <span class="instagram-icon">📸</span> @tutorgptclass
+            </a>
+        </div>
+        
     </div>
 
     <script>
@@ -64,34 +135,34 @@
         let giroscopioActivo = false;
 
         function activarGiroscopio() {
-            // 1. Verificar si es iPhone (iOS 13+ requiere permiso)
+            // Verificar si es iPhone (iOS 13+ requiere permiso)
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
                     .then(response => {
                         if (response === 'granted') {
                             iniciarRotacion();
                         } else {
-                            alert('Necesitas dar permiso para usar el giroscopio.');
+                            alert('Necesitas permitir el acceso al giroscopio para activar esta función.');
                         }
                     })
                     .catch(console.error);
             } else {
-                // Android y otros
+                // Android y otros dispositivos
                 iniciarRotacion();
             }
         }
 
         function iniciarRotacion() {
             window.addEventListener('deviceorientation', (event) => {
-                // beta: inclinación adelante/atrás (-180 a 180)
-                // gamma: inclinación izquierda/derecha (-90 a 90)
                 if (event.beta !== null && event.gamma !== null) {
-                    // Ajustar la órbita de la cámara según la inclinación
-                    modelViewer.cameraOrbit = `${event.gamma}deg ${90 - event.beta}deg auto`;
+                    // Mapear la inclinación del teléfono a la órbita de la cámara
+                    const yaw = event.gamma; // -90 a 90 (izquierda/derecha)
+                    const pitch = 90 - event.beta; // 0 a 180 (arriba/abajo)
+                    modelViewer.cameraOrbit = `${yaw}deg ${pitch}deg auto`;
                 }
             });
             
-            // Cambiar estilo del botón para indicar que está activo
+            // Actualizar botón
             btnGyro.textContent = "✅ Movimiento Activado";
             btnGyro.classList.add('btn-disabled');
             btnGyro.disabled = true;
